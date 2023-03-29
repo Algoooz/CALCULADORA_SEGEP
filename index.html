@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>CALCULADORA DE CONVERSÃO DE TEMPO DE CONTRIBUÇÃO ESPECIAL EM TEMPO COMUM</title>
+	<script src="js/jspdf.js"></script>
+	<link rel="stylesheet" href="styl.css">
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+			
+        }
+        input[type="date"],
+        input[type="number"],
+        select {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+			
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        .dados {
+            float: left;
+            width: 50%;
+            padding-right: 20px;
+            box-sizing: border-box;
+        }
+        .dados2 {
+			float: right;
+			width: 50%;
+			box-sizing: border-box;
+			margin: 0px 180px;
+		}
+		.dados3{
+			float: left;
+            width: 50%;
+            box-sizing: border-box;
+		}
+        .periodo {
+            clear: both;
+            margin-top: 50px;
+            margin-bottom: 20px;
+        }
+        .periodo1 {
+            margin-bottom: 50px;
+			
+        }
+        .resultado {
+            margin-top: 50px;
+			
+        }
+    </style>
+	
+</head>
+<body>
+	<h1>CALCULADORA DE CONVERSÃO DE TEMPO DE CONTRIBUÇÃO ESPECIAL EM TEMPO COMUM</h1>
+	<div class="container">
+		<div class="dados">
+			<label for="sexo">Sexo:</label>
+			<select id="sexo" name="sexo">
+				<option value="M">Masculino</option>
+				<option value="F">Feminino</option>
+			</select><br><br>
+
+			<label for="dif1">Total de dias:</label>
+			<input type="number" id="dif1" name="dif1" disabled><br><br>
+		</div>
+		<div class="dados3">
+			<label for="diferenca2">Dias a excluir:</label>
+			<input type="number" id="diferenca2" name="diferenca2" disabled><br><br>
+
+			<label for="resultado">Dias a ponderar:</label>
+			<input type="number" id="resultado" name="resultado" disabled><br><br>
+		</div>
+
+	<div class="dados2">
+		<label for="resultado_subtracao">Tempo especial apurado:</label>
+		<input type="number" id="resultado_subtracao" name="resultado_subtracao" disabled><br><br>
+
+		<label for="diferenca1">Tempo total do período:</label>
+		<input type="number" id="diferenca1" name="diferenca1" disabled><br><br>
+	</div>
+
+	<div class="periodo">
+		<h1>PERÍODO(S) A PONDERAR:</h1>
+
+		<label for="data1">Data Início:</label>
+		<input type="date" id="data1" name="data1"><br><br>
+
+		<label for="data2">Data Fim:</label>
+		<input type="date" id="data2" name="data2"><br><br>
+	</div>
+	<div class="periodo1">
+		<h1>PERÍODO(S) A EXCLUIR DA PONDERAÇÃO:</h1>
+
+		<label for="data3">Data Início:</label>
+		<input type="date" id="data3" name="data3"><br><br>
+
+		<label for="data4">Data Fim:</label>
+		<input type="date" id="data4" name="data4"><br><br>
+	</div>
+	<button onclick="calcular()">Calcular</button><br><br>
+
+	<button onclick="gerarPDF()">Gerar PDF</button>
+</div>
+	<script>
+		function calcular() {
+			var data1 = new Date(document.getElementById("data1").value);
+			var data2 = new Date(document.getElementById("data2").value);
+			var data3 = new Date(document.getElementById("data3").value);
+			var data4 = new Date(document.getElementById("data4").value);
+            var sexo = document.getElementById("sexo").value;
+			var fator_ponderacao = sexo == "M" ? 1.4 : 1.2;
+
+			var diferenca1 = Math.abs(data1.getTime() - data2.getTime());
+            var dif1 = Math.abs(data1.getTime() - data2.getTime());
+			var diferenca2 = Math.abs(data3.getTime() - data4.getTime());
+			// var diferenca_total = Math.abs(data1.getTime() - data3.getTime());
+            var resultado = Math.floor(dif1 / (1000 * 60 * 60 * 24)) - Math.floor(diferenca2 / (1000 * 60 * 60 * 24));
+            
+            var diferenca_total = Math.floor(diferenca1 / (1000 * 60 * 60 * 24) * fator_ponderacao) - Math.floor(dif1 / (1000 * 60 * 60 * 24));
+
+            document.getElementById("dif1").value = Math.floor(dif1 / (1000 * 60 * 60 * 24));
+			document.getElementById("diferenca1").value = Math.floor(diferenca1 / (1000 * 60 * 60 * 24) * fator_ponderacao);
+			document.getElementById("diferenca2").value = Math.floor(diferenca2 / (1000 * 60 * 60 * 24));
+            document.getElementById("resultado").value = resultado;
+            document.getElementById("resultado_subtracao").value = diferenca_total;
+
+		}
+
+		function gerarPDF() {
+			// cria um novo objeto jsPDF
+			var doc = new jsPDF();
+
+			// define o conteúdo do PDF
+			var conteudo = "Sexo: " + document.getElementById("sexo").value + "\n" +
+						"Total de dias: " + document.getElementById("dif1").value + "\n" +
+						"Dias a excluir: " + document.getElementById("diferenca2").value + "\n" +
+						"Dias a ponderar: " + document.getElementById("resultado").value + "\n" +
+						"Tempo especial apurado: " + document.getElementById("resultado_subtracao").value + "\n" +
+						"Tempo total do período: " + document.getElementById("diferenca1").value + "\n" +
+						"Data Início: " + document.getElementById("data1").value + "\n" +
+						"Data Fim: " + document.getElementById("data2").value + "\n" +
+						"Data 3: " + document.getElementById("data3").value + "\n" +
+						"Data 4: " + document.getElementById("data4").value;
+
+			// adiciona o conteúdo ao PDF
+			doc.text(conteudo, 10, 10);
+
+			// salva o PDF
+			doc.save("calculo.pdf");
+		}
+
+
+	</script>
+</body>
+</html>
