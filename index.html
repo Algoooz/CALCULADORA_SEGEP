@@ -90,6 +90,9 @@
             margin-top: 50px;
 			
         }
+		#links{
+			text-align: center;
+		}
     </style>
 	
 </head>
@@ -110,8 +113,8 @@
 			<label for="diferenca2">Dias a excluir:</label>
 			<input type="number" id="diferenca2" name="diferenca2" disabled><br><br>
 
-			<label for="resultado">Dias a ponderar:</label>
-			<input type="number" id="resultado" name="resultado" disabled><br><br>
+			<label for="diasaponderar">Dias a ponderar:</label>
+			<input type="number" id="diasaponderar" name="diasaponderar" disabled><br><br>
 		</div>
 
 	<div class="dados2">
@@ -138,48 +141,90 @@
 		<input type="date" id="data3" name="data3"><br><br>
 
 		<label for="data4">Data Fim:</label>
-		<input type="date" id="data4" name="data4"><br><br>
+		<input type="date" id="data4" name="data4">
 	</div>
-	<button onclick="calcular()">Calcular</button><br><br>
+
+	<div id="container"></div>
+
+	<button id="btn-novas-datas">Gerar novas datas</button>
+
+	<button id="calculo" onclick="calcular()">Calcular</button><br><br>
 
 	<button onclick="gerarPDF()">Gerar PDF</button>
-		
-		
+
+	<a href="http://" target="_blank" rel="noopener noreferrer">Desenvolvido por Gianlucca Borba</a>
+
 </div>
 	<script>
+
+			const btnNovasDatas = document.querySelector('#btn-novas-datas');
+
+			btnNovasDatas.addEventListener('click', () => {
+			const divDatas = document.createElement('div');
+			divDatas.textContent = 'Outros periodos a excluir:';
+			const labelData1 = document.createElement('label');
+			labelData1.textContent = 'Data Início: ';
+			const inputData1 = document.createElement('input');
+			inputData1.type = 'date';
+			const labelData2 = document.createElement('label');
+			labelData2.textContent = 'Data Fim: ';
+			const inputData2 = document.createElement('input');
+			inputData2.type = 'date';
+			divDatas.appendChild(labelData1);
+			divDatas.appendChild(inputData1);
+			divDatas.appendChild(labelData2);
+			divDatas.appendChild(inputData2);
+
+			const container = document.querySelector('#container');
+			container.appendChild(divDatas);
+
+			const resultado = document.createElement('p');
+			divDatas.appendChild(resultado);
+			
+			calculo.addEventListener('click', () => {
+
+			const data1 = new Date(inputData1.value);
+			const data2 = new Date(inputData2.value);
+
+			const diferencaEmDias = Math.round(Math.abs((data1 - data2) / (24 * 60 * 60 * 1000)));
+
+			resultado.textContent = `A diferença entre as datas é de ${diferencaEmDias} dias.`;
+
+			});
+		});
+
 		function calcular() {
 			var data1 = new Date(document.getElementById("data1").value);
 			var data2 = new Date(document.getElementById("data2").value);
 			var data3 = new Date(document.getElementById("data3").value);
 			var data4 = new Date(document.getElementById("data4").value);
+
             var sexo = document.getElementById("sexo").value;
 			var fator_ponderacao = sexo == "M" ? 1.4 : 1.2;
 
 			var diferenca1 = Math.abs(data1.getTime() - data2.getTime());
             var dif1 = Math.abs(data1.getTime() - data2.getTime());
 			var diferenca2 = Math.abs(data3.getTime() - data4.getTime());
-			// var diferenca_total = Math.abs(data1.getTime() - data3.getTime());
-            var resultado = Math.floor(dif1 / (1000 * 60 * 60 * 24)) - Math.floor(diferenca2 / (1000 * 60 * 60 * 24));
-            
+            var diasaponderar = Math.floor(dif1 / (1000 * 60 * 60 * 24)) - Math.floor(diferenca2 / (1000 * 60 * 60 * 24));
             var diferenca_total = Math.floor(diferenca1 / (1000 * 60 * 60 * 24) * fator_ponderacao) - Math.floor(dif1 / (1000 * 60 * 60 * 24));
+
+			
 
             document.getElementById("dif1").value = Math.floor(dif1 / (1000 * 60 * 60 * 24));
 			document.getElementById("diferenca1").value = Math.floor(diferenca1 / (1000 * 60 * 60 * 24) * fator_ponderacao);
 			document.getElementById("diferenca2").value = Math.floor(diferenca2 / (1000 * 60 * 60 * 24));
-            document.getElementById("resultado").value = resultado;
+            document.getElementById("diasaponderar").value = diasaponderar;
             document.getElementById("resultado_subtracao").value = diferenca_total;
 
 		}
 
 		function gerarPDF() {
-			// cria um novo objeto jsPDF
 			var doc = new jsPDF();
 
-			// define o conteúdo do PDF
 			var conteudo = "Sexo: " + document.getElementById("sexo").value + "\n" +
 						"Total de dias: " + document.getElementById("dif1").value + "\n" +
 						"Dias a excluir: " + document.getElementById("diferenca2").value + "\n" +
-						"Dias a ponderar: " + document.getElementById("resultado").value + "\n" +
+						"Dias a ponderar: " + document.getElementById("diasaponderar").value + "\n" +
 						"Tempo especial apurado: " + document.getElementById("resultado_subtracao").value + "\n" +
 						"Tempo total do período: " + document.getElementById("diferenca1").value + "\n" +
 						"Data Início: " + document.getElementById("data1").value + "\n" +
@@ -187,13 +232,10 @@
 						"Data 3: " + document.getElementById("data3").value + "\n" +
 						"Data 4: " + document.getElementById("data4").value;
 
-			// adiciona o conteúdo ao PDF
 			doc.text(conteudo, 10, 10);
 
-			// salva o PDF
 			doc.save("calculo.pdf");
 		}
-
 
 	</script>
 </body>
