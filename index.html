@@ -161,25 +161,25 @@
 
 			btnNovasDatas.addEventListener('click', () => {
 			const divDatas = document.createElement('div');
-			divDatas.textContent = 'Outros periodos a excluir:';
+				divDatas.textContent = 'Outros periodos a excluir:';
 			const labelData1 = document.createElement('label');
-			labelData1.textContent = 'Data Início: ';
+				labelData1.textContent = 'Data Início: ';
 			const inputData1 = document.createElement('input');
-			inputData1.type = 'date';
+				inputData1.type = 'date';
 			const labelData2 = document.createElement('label');
-			labelData2.textContent = 'Data Fim: ';
+				labelData2.textContent = 'Data Fim: ';
 			const inputData2 = document.createElement('input');
-			inputData2.type = 'date';
+				inputData2.type = 'date';
 			divDatas.appendChild(labelData1);
 			divDatas.appendChild(inputData1);
 			divDatas.appendChild(labelData2);
 			divDatas.appendChild(inputData2);
 
 			const container = document.querySelector('#container');
-			container.appendChild(divDatas);
+				container.appendChild(divDatas);
 
 			const resultado = document.createElement('p');
-			divDatas.appendChild(resultado);
+				divDatas.appendChild(resultado);
 			
 			calculo.addEventListener('click', () => {
 
